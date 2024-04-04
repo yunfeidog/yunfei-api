@@ -1,0 +1,48 @@
+# 公共配置文件
+#
+#
+server:
+  port: 10001
+spring:
+  cloud:
+    gateway:
+      default-filters:
+        - AddResponseHeader=source, yunfei
+      routes:
+        - id: api_route
+          uri: http://localhost:10002
+          predicates:
+            - Path=/api/**
+#        - id: add_request_header_route
+#          uri: http://localhost:8123
+#          predicates:
+#            - Path=/api/**
+#          filters:
+#            - AddRequestHeader=yunfei, swag
+#            - AddRequestParameter=name, dog
+#            - name: CircuitBreaker
+#              args:
+#                name: myCircuitBreaker
+#                fallbackUri: forward:/fallback
+#        - id: yunfei-fallback
+#          uri: https://yunfei.icu
+#          predicates:
+#            - Path=/fallback
+logging:
+  level:
+    org:
+      springframework:
+        cloud:
+          gateway: trace
+
+
+dubbo:
+  application:
+    name: dubbo-springboot-demo-provider
+  protocol:
+    name: dubbo
+    port: -1
+  registry:
+    id: nacos-registry
+    address: nacos://localhost:8848
+
