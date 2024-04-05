@@ -1,18 +1,18 @@
 package com.yunfei.yunfeiapicommon.model.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
-import lombok.Data;
-
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
+import lombok.Data;
 
 /**
  * 用户
- *
- *  
- *   
+ * @TableName user
  */
-@TableName(value = "user")
+@TableName(value ="user")
 @Data
 public class User implements Serializable {
     /**
@@ -22,29 +22,9 @@ public class User implements Serializable {
     private Long id;
 
     /**
-     * 用户昵称
-     */
-    private String userName;
-
-    /**
      * 账号
      */
     private String userAccount;
-
-    /**
-     * 用户头像
-     */
-    private String userAvatar;
-
-    /**
-     * 性别
-     */
-    private Integer gender;
-
-    /**
-     * 用户角色: user, admin
-     */
-    private String userRole;
 
     /**
      * 密码
@@ -52,14 +32,54 @@ public class User implements Serializable {
     private String userPassword;
 
     /**
-     * 签名 accessKey
+     * 用户昵称
+     */
+    private String userName;
+
+    /**
+     * 用户头像
+     */
+    private String userAvatar;
+
+    /**
+     * 用户简介
+     */
+    private String userProfile;
+
+    /**
+     * 邮箱
+     */
+    private String email;
+
+    /**
+     * 手机号
+     */
+    private String phone;
+
+    /**
+     * 性别
+     */
+    private Integer gender;
+
+    /**
+     * 用户角色：user / admin
+     */
+    private String userRole;
+
+    /**
+     * accessKey
      */
     private String accessKey;
 
     /**
-     * 签名 secretKey
+     * secretKey
      */
     private String secretKey;
+
+    /**
+     * 剩余硬币
+     */
+    private Long remainCoins;
 
     /**
      * 创建时间
@@ -74,10 +94,7 @@ public class User implements Serializable {
     /**
      * 是否删除
      */
-    @TableLogic
     private Integer isDelete;
-
-     
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

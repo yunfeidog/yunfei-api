@@ -23,9 +23,6 @@ import static com.yunfei.project.constant.UserConstant.USER_LOGIN_STATE;
 
 /**
  * 用户服务实现类
- *
- *  
- *   
  */
 @Service
 @Slf4j
@@ -49,7 +46,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         if (userAccount.length() < 4) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户账号过短");
         }
-        if (userPassword.length() < 8 || checkPassword.length() < 8) {
+        if (userPassword.length() < 6 || checkPassword.length() < 6) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户密码过短");
         }
         // 密码和校验密码相同
@@ -75,6 +72,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             user.setUserPassword(encryptPassword);
             user.setAccessKey(accessKey);
             user.setSecretKey(secretKey);
+            user.setUserName("ikun_" + RandomUtil.randomNumbers(5));
+            user.setUserAvatar("http://yunfei.plus/site_logo.png");
+            user.setUserProfile("这个人很懒，什么都没留下!");
+            user.setGender(0);
+            user.setRemainCoins(100L);
             boolean saveResult = this.save(user);
             if (!saveResult) {
                 throw new BusinessException(ErrorCode.SYSTEM_ERROR, "注册失败，数据库错误");

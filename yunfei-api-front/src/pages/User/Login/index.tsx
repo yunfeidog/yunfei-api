@@ -9,11 +9,12 @@ import {
   WeiboCircleOutlined,
 } from '@ant-design/icons';
 import {LoginForm, ProFormCaptcha, ProFormCheckbox, ProFormText,} from '@ant-design/pro-components';
-import {history, useModel} from '@umijs/max';
-import {Alert, message, Tabs} from 'antd';
+import {history, Link, useModel} from '@umijs/max';
+import {Alert, Divider, message, Space, Tabs, Typography} from 'antd';
 import React, {useState} from 'react';
 import styles from './index.less';
 import {userLoginUsingPOST} from '@/services/yunfeiapi-backend/userController';
+import {flushSync} from "react-dom";
 
 const LoginMessage: React.FC<{
   content: string;
@@ -30,17 +31,11 @@ const LoginMessage: React.FC<{
   );
 };
 const Login: React.FC = () => {
+  // @ts-ignore
   const [userLoginState, setUserLoginState] = useState<API.LoginResult>({});
   const [type, setType] = useState<string>('account');
+  // @ts-ignore
   const {initialState, setInitialState} = useModel('@@initialState');
-
-  //给账号和密码添加默认值 admin123,方便调试 q:怎么使用？a:在登录页面输入框中输入admin123即可
-  const [initialValues] = useState({
-    userAccount: 'admin123',
-    userPassword: 'admin123',
-  });
-
-
   const handleSubmit = async (values: API.UserLoginRequest) => {
     try {
       // 登录
@@ -48,21 +43,20 @@ const Login: React.FC = () => {
         ...values,
       });
       if (res.data) {
-
+        message.success('登录成功！');
+        flushSync(() => {
+          setInitialState({
+            currentUser: res.data
+          });
+        })
         const urlParams = new URL(window.location.href).searchParams;
         history.push(urlParams.get('redirect') || '/');
-
-
-        message.success('登录成功！');
-        setInitialState({
-          currentUser: res.data
-        });
         return;
 
       }
     } catch (error) {
       const defaultLoginFailureMessage = '登录失败，请重试！';
-      console.log(error);
+      console.error(error);
       message.error(defaultLoginFailureMessage);
     }
   };
@@ -72,8 +66,8 @@ const Login: React.FC = () => {
       <div className={styles.content}>
         <LoginForm
           logo={<img alt="logo" src="/logo.svg"/>}
-          title="云飞接口"
-          subTitle={'API 开放平台'}
+          title="云飞接口开放平台"
+          subTitle={'这是一个集合了各种功能的API 开放平台'}
           initialValues={{
             autoLogin: true,
           }}
@@ -100,6 +94,7 @@ const Login: React.FC = () => {
                 key: 'mobile',
                 label: '手机号登录',
               },
+
             ]}
           />
 
@@ -110,7 +105,7 @@ const Login: React.FC = () => {
             <>
               <ProFormText
                 name="userAccount"
-                initialValue={initialValues.userAccount}
+                initialValue={"admin123"}
                 fieldProps={{
                   size: 'large',
                   prefix: <UserOutlined className={styles.prefixIcon}/>,
@@ -125,7 +120,7 @@ const Login: React.FC = () => {
               />
               <ProFormText.Password
                 name="userPassword"
-                initialValue={initialValues.userPassword}
+                initialValue={"admin123"}
                 fieldProps={{
                   size: 'large',
                   prefix: <LockOutlined className={styles.prefixIcon}/>,
@@ -188,6 +183,7 @@ const Login: React.FC = () => {
                   const result = await getFakeCaptcha({
                     phone,
                   });
+                  // @ts-ignore
                   if (result === false) {
                     return;
                   }
@@ -201,16 +197,23 @@ const Login: React.FC = () => {
               marginBottom: 24,
             }}
           >
-            <ProFormCheckbox noStyle name="autoLogin">
-              自动登录
-            </ProFormCheckbox>
-            <a
-              style={{
-                float: 'right',
-              }}
-            >
-              忘记密码 ?
-            </a>
+            <Space split={<Divider type="vertical"/>} size={"middle"}>
+                <ProFormCheckbox noStyle name="autoLogin">
+                  自动登录
+                </ProFormCheckbox>
+              <Typography.Link>
+                <Link to="/" key={"forget"}>
+                  忘记密码 ?
+                </Link>
+              </Typography.Link>
+              <Typography.Link >
+                <Link to="/user/register" key={"register"}>
+                  立即注册 ?
+                </Link>
+              </Typography.Link>
+            </Space>
+
+
           </div>
         </LoginForm>
       </div>

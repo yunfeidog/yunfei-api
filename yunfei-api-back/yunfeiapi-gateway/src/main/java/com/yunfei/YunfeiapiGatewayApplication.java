@@ -13,6 +13,9 @@ import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.reactive.CorsWebFilter;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
 /**
  * 网关入口
@@ -38,6 +41,20 @@ public class YunfeiapiGatewayApplication {
         String result2 = application.doSayHello2("world");
         System.out.println("result: " + result);
         System.out.println("result: " + result2);
+    }
+
+
+    @Bean
+    public CorsWebFilter corsFilter() {
+        //允许所有跨域请求
+        CorsConfiguration config = new CorsConfiguration();
+        config.addAllowedMethod("*");
+        config.addAllowedHeader("*");
+        config.addAllowedOriginPattern("*");
+        config.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return new CorsWebFilter(source);
     }
 
     public String doSayHello(String name) {

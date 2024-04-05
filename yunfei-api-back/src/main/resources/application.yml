@@ -1,6 +1,6 @@
 # 公共配置文件
-#  
-#   
+#
+#
 spring:
   application:
     name: yunfeiapi-backend
@@ -44,9 +44,10 @@ yunfeiapi:
 dubbo:
   application:
     name: dubbo-springboot-demo-provider
+    qosPort: 20020
   protocol:
     name: dubbo
-    port: -1
+    port: 20000
   registry:
     id: nacos-registry
     address: nacos://localhost:8848

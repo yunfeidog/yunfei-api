@@ -28,6 +28,7 @@ declare const REACT_APP_ENV: 'test' | 'dev' | 'pre' | false;
  */
 interface InitialState {
   currentUser?: API.UserVO;
+  settings?: API.Settings;
 }
 
 
