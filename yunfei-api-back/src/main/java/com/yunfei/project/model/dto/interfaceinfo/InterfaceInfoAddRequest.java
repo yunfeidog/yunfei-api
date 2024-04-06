@@ -7,8 +7,8 @@ import java.io.Serializable;
 /**
  * 接口创建请求
  *
- *  
- *   
+ *
+ *
  */
 @Data
 public class InterfaceInfoAddRequest implements Serializable {
@@ -29,9 +29,19 @@ public class InterfaceInfoAddRequest implements Serializable {
     private String url;
 
     /**
+     * 请求类型
+     */
+    private String method;
+
+    /**
      * 请求参数
      */
     private String requestParams;
+
+    /**
+     * 响应参数
+     */
+    private String responseParams;
 
     /**
      * 请求头
@@ -44,8 +54,17 @@ public class InterfaceInfoAddRequest implements Serializable {
     private String responseHeader;
 
     /**
-     * 请求类型
+     * 返回格式类型
      */
-    private String method;
+    private String returnFormat;
 
+    /**
+     * 消耗金币
+     */
+    private Long consumeCoins;
+
+    /**
+     * 请求示例
+     */
+    private String requestExample;
 }

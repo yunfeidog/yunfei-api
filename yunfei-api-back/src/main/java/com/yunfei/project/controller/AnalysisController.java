@@ -54,7 +54,7 @@ public class AnalysisController {
         List<InterfaceInfoVO> interfaceInfoVOList = list.stream().map(interfaceInfo -> {
             InterfaceInfoVO interfaceInfoVO = new InterfaceInfoVO();
             BeanUtils.copyProperties(interfaceInfo, interfaceInfoVO);
-            int totalNum = interfaceInfoIdObjMap.get(interfaceInfo.getId()).get(0).getTotalNum();
+            int totalNum = interfaceInfoIdObjMap.get(interfaceInfo.getId()).get(0).getTotalInvokes();
             interfaceInfoVO.setTotalNum(totalNum);
             return interfaceInfoVO;
         }).collect(Collectors.toList());

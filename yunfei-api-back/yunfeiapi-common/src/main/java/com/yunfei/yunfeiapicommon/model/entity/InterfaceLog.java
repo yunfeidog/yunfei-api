@@ -9,37 +9,62 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * 用户调用接口关系
- * @TableName user_interface_info
+ * 接口调用记录表
+ * @TableName interface_log
  */
-@TableName(value ="user_interface_info")
+@TableName(value ="interface_log")
 @Data
-public class UserInterfaceInfo implements Serializable {
+public class InterfaceLog implements Serializable {
     /**
-     * 主键
+     * id
      */
     @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
-     * 调用用户 id
+     * 接口id
+     */
+    private Long interfaceId;
+
+    /**
+     * 用户id
      */
     private Long userId;
 
     /**
-     * 接口 id
+     * 请求时间
      */
-    private Long interfaceInfoId;
+    private Date requestTime;
 
     /**
-     * 总调用次数
+     * 请求方式
      */
-    private Integer totalInvokes;
+    private String requestMethod;
 
     /**
-     * 0-正常，1-禁用
+     * 请求地址
      */
-    private Integer status;
+    private String requestUrl;
+
+    /**
+     * 请求长度
+     */
+    private Long requestContentLength;
+
+    /**
+     * 响应长度
+     */
+    private Long responseStatusCode;
+
+    /**
+     * 请求处理时间
+     */
+    private Long requestDuration;
+
+    /**
+     * 用户ip
+     */
+    private String clientIp;
 
     /**
      * 创建时间
@@ -52,7 +77,7 @@ public class UserInterfaceInfo implements Serializable {
     private Date updateTime;
 
     /**
-     * 是否删除(0-未删, 1-已删)
+     * 是否删除 0-未删除 1-删除
      */
     private Integer isDelete;
 

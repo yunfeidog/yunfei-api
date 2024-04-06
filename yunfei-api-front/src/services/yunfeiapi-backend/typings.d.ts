@@ -130,16 +130,21 @@ declare namespace API {
   };
 
   type InterfaceInfo = {
+    consumeCoins?: number;
     createTime?: string;
     description?: string;
     id?: number;
     isDelete?: number;
     method?: string;
     name?: string;
+    requestExample?: string;
     requestHeader?: string;
     requestParams?: string;
     responseHeader?: string;
+    responseParams?: string;
+    returnFormat?: string;
     status?: number;
+    totalInvokes?: number;
     updateTime?: string;
     url?: string;
     userId?: number;
@@ -173,16 +178,21 @@ declare namespace API {
   };
 
   type InterfaceInfoVO = {
+    consumeCoins?: number;
     createTime?: string;
     description?: string;
     id?: number;
     isDelete?: number;
     method?: string;
     name?: string;
+    requestExample?: string;
     requestHeader?: string;
     requestParams?: string;
     responseHeader?: string;
+    responseParams?: string;
+    returnFormat?: string;
     status?: number;
+    totalInvokes?: number;
     totalNum?: number;
     updateTime?: string;
     url?: string;
@@ -497,15 +507,19 @@ declare namespace API {
   type User = {
     accessKey?: string;
     createTime?: string;
+    email?: string;
     gender?: number;
     id?: number;
     isDelete?: number;
+    phone?: string;
+    remainCoins?: number;
     secretKey?: string;
     updateTime?: string;
     userAccount?: string;
     userAvatar?: string;
     userName?: string;
     userPassword?: string;
+    userProfile?: string;
     userRole?: string;
   };
 
@@ -523,9 +537,8 @@ declare namespace API {
     id?: number;
     interfaceInfoId?: number;
     isDelete?: number;
-    leftNum?: number;
     status?: number;
-    totalNum?: number;
+    totalInvokes?: number;
     updateTime?: string;
     userId?: number;
   };

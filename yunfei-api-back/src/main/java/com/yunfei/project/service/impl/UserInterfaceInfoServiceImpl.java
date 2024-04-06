@@ -11,9 +11,6 @@ import org.springframework.stereotype.Service;
 
 /**
  * 用户接口信息服务实现类
- *
- *  
- *   
  */
 @Service
 public class UserInterfaceInfoServiceImpl extends ServiceImpl<UserInterfaceInfoMapper, UserInterfaceInfo>
@@ -29,9 +26,6 @@ public class UserInterfaceInfoServiceImpl extends ServiceImpl<UserInterfaceInfoM
             if (userInterfaceInfo.getInterfaceInfoId() <= 0 || userInterfaceInfo.getUserId() <= 0) {
                 throw new BusinessException(ErrorCode.PARAMS_ERROR, "接口或用户不存在");
             }
-        }
-        if (userInterfaceInfo.getLeftNum() < 0) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "剩余次数不能小于 0");
         }
     }
 

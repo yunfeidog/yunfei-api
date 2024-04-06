@@ -7,13 +7,12 @@ import java.io.Serializable;
 /**
  * 更新请求
  *
- *  
- *   
+ *
+ *
  */
 @Data
 public class InterfaceInfoUpdateRequest implements Serializable {
 
-    // [加入编程导航](https://yunfei.icu) 入门捷径+交流答疑+项目实战+求职指导，帮你自学编程不走弯路
 
     /**
      * 主键
@@ -36,9 +35,19 @@ public class InterfaceInfoUpdateRequest implements Serializable {
     private String url;
 
     /**
+     * 请求类型
+     */
+    private String method;
+
+    /**
      * 请求参数
      */
     private String requestParams;
+
+    /**
+     * 响应参数
+     */
+    private String responseParams;
 
     /**
      * 请求头
@@ -51,14 +60,24 @@ public class InterfaceInfoUpdateRequest implements Serializable {
     private String responseHeader;
 
     /**
-     * 接口状态（0-关闭，1-开启）
+     * 返回格式类型
      */
-    private Integer status;
+    private String returnFormat;
 
     /**
-     * 请求类型
+     * 消耗金币
      */
-    private String method;
+    private Long consumeCoins;
+
+    /**
+     * 请求示例
+     */
+    private String requestExample;
+
+    /**
+     * 接口状态
+     */
+    private String status;
 
     private static final long serialVersionUID = 1L;
 }

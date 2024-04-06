@@ -5,13 +5,14 @@ import '@umijs/max';
 import {Button, Drawer, message} from 'antd';
 import React, {useRef, useState} from 'react';
 import type {SortOrder} from 'antd/es/table/interface';
+import {interfaceMethodList, interfaceStatusList} from '@/model/enums/interfaceInfoEnum';
 import {
-  addInterfaceInfoUsingPOST,
-  deleteInterfaceInfoUsingPOST,
-  listInterfaceInfoByPageUsingGET,
-  offlineInterfaceInfoUsingPOST,
-  onlineInterfaceInfoUsingPOST,
-  updateInterfaceInfoUsingPOST
+  addInterfaceInfoUsingPost,
+  deleteInterfaceInfoUsingPost,
+  listInterfaceInfoByPageUsingGet,
+  offlineInterfaceInfoUsingPost,
+  onlineInterfaceInfoUsingPost,
+  updateInterfaceInfoUsingPost
 } from '@/services/yunfeiapi-backend/interfaceInfoController';
 import CreateModal from '@/pages/Admin/InterfaceInfo/components/CreateModal';
 import UpdateModal from "@/pages/Admin/InterfaceInfo/components/UpdateModal";
@@ -40,7 +41,7 @@ const TableList: React.FC = () => {
   const handleAdd = async (fields: API.InterfaceInfo) => {
     const hide = message.loading('正在添加');
     try {
-      await addInterfaceInfoUsingPOST({
+      await addInterfaceInfoUsingPost({
         ...fields,
       });
       hide();
@@ -66,7 +67,7 @@ const TableList: React.FC = () => {
     }
     const hide = message.loading('修改中');
     try {
-      await updateInterfaceInfoUsingPOST({
+      await updateInterfaceInfoUsingPost({
         id: currentRow.id,
         ...fields
       });
@@ -89,7 +90,7 @@ const TableList: React.FC = () => {
     const hide = message.loading('发布中');
     if (!record) return true;
     try {
-      await onlineInterfaceInfoUsingPOST({
+      await onlineInterfaceInfoUsingPost({
         id: record.id
       });
       hide();
@@ -112,7 +113,7 @@ const TableList: React.FC = () => {
     const hide = message.loading('发布中');
     if (!record) return true;
     try {
-      await offlineInterfaceInfoUsingPOST({
+      await offlineInterfaceInfoUsingPost({
         id: record.id
       });
       hide();
@@ -136,7 +137,7 @@ const TableList: React.FC = () => {
     const hide = message.loading('正在删除');
     if (!record) return true;
     try {
-      await deleteInterfaceInfoUsingPOST({
+      await deleteInterfaceInfoUsingPost({
         id: record.id
       });
       hide();
@@ -157,9 +158,18 @@ const TableList: React.FC = () => {
 
   const columns: ProColumns<API.InterfaceInfo>[] = [
     {
+      title: 'id',
+      dataIndex: 'id',
+      valueType: 'text',
+      hideInTable: true,
+      hideInForm: true,
+      search: false,
+    },
+    {
       title: '接口名称',
       dataIndex: 'name',
       valueType: 'text',
+      width: 200,
       formItemProps: {
         rules: [{
           required: true,
@@ -170,54 +180,109 @@ const TableList: React.FC = () => {
       title: '描述',
       dataIndex: 'description',
       valueType: 'textarea',
+      ellipsis: true,// 是否自动缩略
+    },
+    {
+      title: '接口地址',
+      dataIndex: 'url',
+      valueType: 'text',
+      width: 300,
+      ellipsis: true,
+      hideInSearch: true,
     },
     {
       title: '请求方法',
       dataIndex: 'method',
-      valueType: 'text',
-    },
-    {
-      title: 'url',
-      dataIndex: 'url',
-      valueType: 'text',
+      valueEnum: interfaceMethodList,
     },
     {
       title: '请求参数',
       dataIndex: 'requestParams',
       valueType: 'jsonCode',
+      hideInSearch: true,
+      hideInTable: true,
+    },
+    {
+      title: '响应参数',
+      dataIndex: 'responseParams',
+      valueType: 'jsonCode',
+      hideInSearch: true,
+      hideInTable: true,
+
     },
     {
       title: '请求头',
       dataIndex: 'requestHeader',
       valueType: 'jsonCode',
+      hideInSearch: true,
+      hideInTable: true,
+
     },
     {
       title: '响应头',
       dataIndex: 'responseHeader',
       valueType: 'jsonCode',
+      hideInSearch: true,
+      hideInTable: true,
+
+    },
+    {
+      title: '返回格式类型',
+      dataIndex: 'returnFormat',
+      valueType: 'jsonCode',
+      hideInSearch: true,
+      hideInTable: true,
+
+    },
+    {
+      title: '消耗金币',
+      dataIndex: 'consumeCoins',
+      valueType: 'digit',
+      ellipsis: true,
+      hideInSearch: true,
+      formItemProps: {
+        rules: [
+          {
+            required: true,
+            type: 'number',
+            min: 0,
+          },
+        ],
+      },
+    },
+    {
+      title: '调用总次数',
+      dataIndex: 'totalInvokes',
+      valueType: 'text',
+      ellipsis: true,
+      hideInForm: true,
+      hideInSearch: true,
+    },
+    {
+      title: '请求示例',
+      dataIndex: 'requestExample',
+      valueType: 'jsonCode',
+      width: 300,
+      ellipsis: true,
+      hideInSearch: true,
+      hideInTable: true,
+
     },
     {
       title: '状态',
       dataIndex: 'status',
       hideInForm: true,
-      valueEnum: {
-        0: {
-          text: '关闭',
-          status: 'Default',
-        },
-        1: {
-          text: '开启',
-          status: 'Processing',
-        },
-      },
+      valueEnum: interfaceStatusList,
+      width: 100
     },
     {
       title: '操作',
       dataIndex: 'option',
       valueType: 'option',
+      width: 300,
       render: (_, record) => [
         <a
-          key="config"
+          key="update"
           onClick={() => {
             handleUpdateModalVisible(true);
             setCurrentRow(record);
@@ -225,24 +290,29 @@ const TableList: React.FC = () => {
         >
           修改
         </a>,
-        record.status === 0 ? <a
-          key="config"
-          onClick={() => {
-            handleOnline(record);
-          }}
-        >
-          发布
-        </a> : null,
-        record.status === 1 ? <Button
-          type="text"
-          key="config"
-          danger
-          onClick={() => {
-            handleOffline(record);
-          }}
-        >
-          下线
-        </Button> : null,
+        record.status === 0 ? (
+          <Button
+            type={"text"}
+            style={{color: 'green'}}
+            key="online"
+            onClick={async () => {
+              await handleOnline(record);
+              setCurrentRow(record)
+            }}
+          >
+            发布
+          </Button>) : (
+          <Button
+            type={"text"}
+            danger
+            key="offline"
+            onClick={async () => {
+              await handleOffline(record);
+              setCurrentRow(record)
+            }}
+          >
+            下线
+          </Button>),
         <Button
           type="text"
           key="config"
@@ -259,10 +329,10 @@ const TableList: React.FC = () => {
 
   return (
     <PageContainer>
-      <ProTable<API.RuleListItem, API.PageParams>
-        headerTitle={'查询表格'}
-        actionRef={actionRef}
-        rowKey="key"
+      <ProTable<API.InterfaceInfo, API.PageParams>
+        headerTitle={'接口列表查询'}
+        actionRef={actionRef} // 用于触发刷新操作等，看文档
+        rowKey="key" // 表格行 key 的取值，可以是字符串或一个函数
         search={{
           labelWidth: 120,
         }}
@@ -282,7 +352,7 @@ const TableList: React.FC = () => {
           sort: Record<string, SortOrder>,
           filter: Record<string, React.ReactText[] | null>,
         ) => {
-          const res: any = await listInterfaceInfoByPageUsingGET({
+          const res: any = await listInterfaceInfoByPageUsingGet({
             ...params,
           });
           if (res?.data) {
@@ -299,6 +369,7 @@ const TableList: React.FC = () => {
             };
           }
         }}
+        scroll={{x: 1500}} // 横向滚动条
         columns={columns}
         rowSelection={{
           onChange: (_, selectedRows) => {
@@ -320,13 +391,14 @@ const TableList: React.FC = () => {
               </a>{' '}
               项 &nbsp;&nbsp;
               <span>
-                服务调用次数总计 {selectedRowsState.reduce((pre, item) => pre + item.callNo!, 0)} 万
+                服务调用次数总计 {selectedRowsState.reduce((pre, item) => pre + item.totalInvokes!, 0)} 万
               </span>
             </div>
           }
         >
           <Button
             onClick={async () => {
+              // @ts-ignore
               await handleRemove(selectedRowsState);
               setSelectedRows([]);
               actionRef.current?.reloadAndRest?.();
@@ -387,6 +459,7 @@ const TableList: React.FC = () => {
         onCancel={() => {
           handleModalVisible(false);
         }}
+        // @ts-ignore
         onSubmit={(values) => {
           handleAdd(values);
         }}

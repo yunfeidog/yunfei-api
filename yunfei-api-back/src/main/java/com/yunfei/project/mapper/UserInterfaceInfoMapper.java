@@ -2,18 +2,19 @@ package com.yunfei.project.mapper;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.yunfei.yunfeiapicommon.model.entity.UserInterfaceInfo;
 
 import java.util.List;
 
 /**
  * 用户接口信息 Mapper
  *
- *  
- *   
+ *
+ *
  */
-public interface UserInterfaceInfoMapper extends BaseMapper<com.yunfei.yunfeiapicommon.model.entity.UserInterfaceInfo> {
+public interface UserInterfaceInfoMapper extends BaseMapper<UserInterfaceInfo> {
 
-    List<com.yunfei.yunfeiapicommon.model.entity.UserInterfaceInfo> listTopInvokeInterfaceInfo(int limit);
+    List<UserInterfaceInfo> listTopInvokeInterfaceInfo(int limit);
 }
 
 

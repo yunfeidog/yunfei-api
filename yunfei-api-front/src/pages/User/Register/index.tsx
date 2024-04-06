@@ -11,13 +11,13 @@ import {history, Link} from '@umijs/max';
 import {message, Tabs} from 'antd';
 import React, {useState} from 'react';
 import styles from './index.less';
-import {userRegisterUsingPOST} from '@/services/yunfeiapi-backend/userController';
+import {userRegisterUsingPost} from '@/services/yunfeiapi-backend/userController';
 
 const Login: React.FC = () => {
   const [type, setType] = useState<string>('account');
   const handleSubmit = async (values: API.UserLoginRequest) => {
     try {
-      const res = await userRegisterUsingPOST({
+      const res = await userRegisterUsingPost({
         ...values,
       });
       console.log("注册结果：", res)

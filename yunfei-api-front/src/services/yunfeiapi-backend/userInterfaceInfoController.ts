@@ -3,7 +3,7 @@
 import { request } from '@umijs/max';
 
 /** addUserInterfaceInfo POST /api/userInterfaceInfo/add */
-export async function addUserInterfaceInfoUsingPOST(
+export async function addUserInterfaceInfoUsingPost(
   body: API.UserInterfaceInfoAddRequest,
   options?: { [key: string]: any },
 ) {
@@ -18,7 +18,7 @@ export async function addUserInterfaceInfoUsingPOST(
 }
 
 /** deleteUserInterfaceInfo POST /api/userInterfaceInfo/delete */
-export async function deleteUserInterfaceInfoUsingPOST(
+export async function deleteUserInterfaceInfoUsingPost(
   body: API.DeleteRequest,
   options?: { [key: string]: any },
 ) {
@@ -33,7 +33,7 @@ export async function deleteUserInterfaceInfoUsingPOST(
 }
 
 /** getUserInterfaceInfoById GET /api/userInterfaceInfo/get */
-export async function getUserInterfaceInfoByIdUsingGET(
+export async function getUserInterfaceInfoByIdUsingGet(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.getUserInterfaceInfoByIdUsingGETParams,
   options?: { [key: string]: any },
@@ -48,7 +48,7 @@ export async function getUserInterfaceInfoByIdUsingGET(
 }
 
 /** listUserInterfaceInfo GET /api/userInterfaceInfo/list */
-export async function listUserInterfaceInfoUsingGET(
+export async function listUserInterfaceInfoUsingGet(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.listUserInterfaceInfoUsingGETParams,
   options?: { [key: string]: any },
@@ -63,7 +63,7 @@ export async function listUserInterfaceInfoUsingGET(
 }
 
 /** listUserInterfaceInfoByPage GET /api/userInterfaceInfo/list/page */
-export async function listUserInterfaceInfoByPageUsingGET(
+export async function listUserInterfaceInfoByPageUsingGet(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
   params: API.listUserInterfaceInfoByPageUsingGETParams,
   options?: { [key: string]: any },
@@ -78,7 +78,7 @@ export async function listUserInterfaceInfoByPageUsingGET(
 }
 
 /** updateUserInterfaceInfo POST /api/userInterfaceInfo/update */
-export async function updateUserInterfaceInfoUsingPOST(
+export async function updateUserInterfaceInfoUsingPost(
   body: API.UserInterfaceInfoUpdateRequest,
   options?: { [key: string]: any },
 ) {

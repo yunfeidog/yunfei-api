@@ -5,7 +5,7 @@ import { SettingDrawer } from '@ant-design/pro-components';
 import type { RunTimeLayoutConfig } from '@umijs/max';
 import { history, Link } from '@umijs/max';
 import { requestConfig } from './requestConfig';
-import {getLoginUserUsingGET} from "@/services/yunfeiapi-backend/userController";
+import {getLoginUserUsingGet} from "@/services/yunfeiapi-backend/userController";
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
@@ -20,7 +20,7 @@ export async function getInitialState(): Promise<InitialState> {
     settings: {},
   }
   try {
-    const res = await getLoginUserUsingGET();
+    const res = await getLoginUserUsingGet();
     if (res.data) {
       state.currentUser = res.data;
     }

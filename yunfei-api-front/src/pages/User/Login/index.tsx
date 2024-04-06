@@ -13,7 +13,7 @@ import {history, Link, useModel} from '@umijs/max';
 import {Alert, Divider, message, Space, Tabs, Typography} from 'antd';
 import React, {useState} from 'react';
 import styles from './index.less';
-import {userLoginUsingPOST} from '@/services/yunfeiapi-backend/userController';
+import {userLoginUsingPost} from '@/services/yunfeiapi-backend/userController';
 import {flushSync} from "react-dom";
 
 const LoginMessage: React.FC<{
@@ -39,7 +39,7 @@ const Login: React.FC = () => {
   const handleSubmit = async (values: API.UserLoginRequest) => {
     try {
       // 登录
-      const res = await userLoginUsingPOST({
+      const res = await userLoginUsingPost({
         ...values,
       });
       if (res.data) {
