@@ -1,11 +1,4 @@
-# 公共配置文件
-#
-#
 server:
   port: 10002
   servlet:
     context-path: /api
-yunfeiapi:
-  client:
-    access-key: yunfei
-    secret-key: abcdefghdaw

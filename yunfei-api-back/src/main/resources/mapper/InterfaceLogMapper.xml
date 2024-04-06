@@ -5,19 +5,20 @@
 <mapper namespace="com.yunfei.project.mapper.InterfaceLogMapper">
 
     <resultMap id="BaseResultMap" type="com.yunfei.yunfeiapicommon.model.entity.InterfaceLog">
-            <id property="id" column="id" jdbcType="BIGINT"/>
-            <result property="interfaceId" column="interfaceId" jdbcType="BIGINT"/>
-            <result property="userId" column="userId" jdbcType="BIGINT"/>
-            <result property="requestTime" column="requestTime" jdbcType="TIMESTAMP"/>
-            <result property="requestMethod" column="requestMethod" jdbcType="VARCHAR"/>
-            <result property="requestUrl" column="requestUrl" jdbcType="VARCHAR"/>
-            <result property="requestContentLength" column="requestContentLength" jdbcType="BIGINT"/>
-            <result property="responseStatusCode" column="responseStatusCode" jdbcType="BIGINT"/>
-            <result property="requestDuration" column="requestDuration" jdbcType="BIGINT"/>
-            <result property="clientIp" column="clientIp" jdbcType="VARCHAR"/>
-            <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
-            <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
-            <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="interfaceId" column="interfaceId" jdbcType="BIGINT"/>
+        <result property="userId" column="userId" jdbcType="BIGINT"/>
+        <result property="requestTime" column="requestTime" jdbcType="TIMESTAMP"/>
+        <result property="requestMethod" column="requestMethod" jdbcType="VARCHAR"/>
+        <result property="requestUrl" column="requestUrl" jdbcType="VARCHAR"/>
+        <result property="requestContentLength" column="requestContentLength" jdbcType="BIGINT"/>
+        <result property="responseStatusCode" column="responseStatusCode" jdbcType="BIGINT"/>
+        <result property="responseContentLength" column="responseContentLength" jdbcType="BIGINT"/>
+        <result property="requestDuration" column="requestDuration" jdbcType="BIGINT"/>
+        <result property="clientIp" column="clientIp" jdbcType="VARCHAR"/>
+        <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
     </resultMap>
 
     <sql id="Base_Column_List">

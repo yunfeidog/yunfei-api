@@ -15,6 +15,8 @@ import com.yunfei.project.model.enums.InterfaceInfoStatusEnum;
 import com.yunfei.project.service.InterfaceInfoService;
 import com.yunfei.project.service.UserService;
 import com.yunfei.yunfeiapiclientsdk.client.YunfeiApiClient;
+import com.yunfei.yunfeiapiclientsdk.exception.GlobalApiException;
+import com.yunfei.yunfeiapiclientsdk.model.response.UserResponse;
 import com.yunfei.yunfeiapicommon.model.entity.InterfaceInfo;
 import com.yunfei.yunfeiapicommon.model.entity.User;
 import lombok.extern.slf4j.Slf4j;
@@ -219,11 +221,16 @@ public class InterfaceInfoController {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
         }
         // 判断该接口是否可以调用
-        com.yunfei.yunfeiapiclientsdk.model.User user = new com.yunfei.yunfeiapiclientsdk.model.User();
+        com.yunfei.yunfeiapiclientsdk.model.params.UserParams user = new com.yunfei.yunfeiapiclientsdk.model.params.UserParams();
         user.setUsername("test");
-        String username = yunfeiapiClient.getUsernameByPost(user);
-        if (StringUtils.isBlank(username)) {
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "接口验证失败");
+        UserResponse userResponse = null;
+        try {
+            userResponse = yunfeiapiClient.getUsernameByPost(user);
+        } catch (GlobalApiException e) {
+            throw new RuntimeException(e);
+        }
+        if (userResponse == null) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "接口调用失败");
         }
         // 仅本人或管理员可修改
         InterfaceInfo interfaceInfo = new InterfaceInfo();
@@ -270,7 +277,7 @@ public class InterfaceInfoController {
      */
     @PostMapping("/invoke")
     public BaseResponse<Object> invokeInterfaceInfo(@RequestBody InterfaceInfoInvokeRequest interfaceInfoInvokeRequest,
-                                                     HttpServletRequest request) {
+                                                    HttpServletRequest request) {
         if (interfaceInfoInvokeRequest == null || interfaceInfoInvokeRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -289,8 +296,13 @@ public class InterfaceInfoController {
         String secretKey = loginUser.getSecretKey();
         YunfeiApiClient tempClient = new YunfeiApiClient(accessKey, secretKey);
         Gson gson = new Gson();
-       com.yunfei.yunfeiapiclientsdk.model.User user = gson.fromJson(userRequestParams, com.yunfei.yunfeiapiclientsdk.model.User.class);
-        String usernameByPost = tempClient.getUsernameByPost(user);
+        com.yunfei.yunfeiapiclientsdk.model.params.UserParams user = gson.fromJson(userRequestParams, com.yunfei.yunfeiapiclientsdk.model.params.UserParams.class);
+        UserResponse usernameByPost = null;
+        try {
+            usernameByPost = tempClient.getUsernameByPost(user);
+        } catch (GlobalApiException e) {
+            throw new RuntimeException(e);
+        }
         return ResultUtils.success(usernameByPost);
     }
 

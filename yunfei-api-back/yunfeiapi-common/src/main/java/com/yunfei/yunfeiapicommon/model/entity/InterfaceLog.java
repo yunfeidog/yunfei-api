@@ -55,6 +55,10 @@ public class InterfaceLog implements Serializable {
      * 响应长度
      */
     private Long responseStatusCode;
+    /**
+     * 响应长度
+     */
+    private Long responseContentLength;
 
     /**
      * 请求处理时间

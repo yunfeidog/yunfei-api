@@ -5,9 +5,6 @@ import com.yunfei.yunfeiapicommon.model.entity.User;
 
 /**
  * 内部用户服务
- *
- *  
- *   
  */
 public interface InnerUserService {
 
