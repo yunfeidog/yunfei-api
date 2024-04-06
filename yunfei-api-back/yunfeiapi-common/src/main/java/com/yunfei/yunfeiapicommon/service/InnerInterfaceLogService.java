@@ -9,5 +9,5 @@ public interface InnerInterfaceLogService {
     /**
      * 存储日志
      */
-    boolean save(InterfaceLog interfaceLog);
+    boolean saveInterfaceLog(InterfaceLog interfaceLog);
 }

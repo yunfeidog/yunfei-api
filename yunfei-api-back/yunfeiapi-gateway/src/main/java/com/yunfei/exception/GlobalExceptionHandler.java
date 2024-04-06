@@ -17,12 +17,7 @@ import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebExceptionHandler;
 import reactor.core.publisher.Mono;
 
-/**
- * @Author: PYW
- * @Date : 2020/12/12
- * @Version: 1.0
- * @Description: 错误web异常处理程序
- */
+
 @Configuration
 @Slf4j
 @Order(-1)

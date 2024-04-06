@@ -33,7 +33,6 @@ import java.util.Map;
 
 /**
  * 调用第三方客户端接口
- *
  */
 @Slf4j
 @Data
@@ -43,8 +42,7 @@ public class YunfeiApiClient {
 
     private String secretKey;
 
-    @Value("$gateway.host}")
-    private String GATEWAY_URL;
+    private static String GATEWAY_URL = "http://localhost:10003";
 
 
     public YunfeiApiClient() {
@@ -283,15 +281,13 @@ public class YunfeiApiClient {
         // 发送请求并获取响应
         HttpResponse response = request.execute();
         String responseBody = response.body();
-        log.info("羊腿Api开放平台网关返回responseBody:{}", responseBody);
+        log.info("Api开放平台网关返回responseBody:{}", responseBody);
         if (response.getStatus() != 200) {
             // 处理网关返回异常
             ErrorResponse errorResponse = JSONUtil.toBean(responseBody, ErrorResponse.class);
             throw new GlobalApiException(errorResponse.getCode(), errorResponse.getMessage());
         }
         // 获取响应体
-
-
         // 解析响应体
         return JSON.parseObject(responseBody, responseType);
     }

@@ -1,5 +1,6 @@
 package com.yunfei.project.controller;
 
+import cn.hutool.core.util.ObjUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.gson.Gson;
@@ -16,6 +17,7 @@ import com.yunfei.project.service.InterfaceInfoService;
 import com.yunfei.project.service.UserService;
 import com.yunfei.yunfeiapiclientsdk.client.YunfeiApiClient;
 import com.yunfei.yunfeiapiclientsdk.exception.GlobalApiException;
+import com.yunfei.yunfeiapiclientsdk.model.BaseRequest;
 import com.yunfei.yunfeiapiclientsdk.model.response.UserResponse;
 import com.yunfei.yunfeiapicommon.model.entity.InterfaceInfo;
 import com.yunfei.yunfeiapicommon.model.entity.User;
@@ -26,6 +28,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -269,41 +273,61 @@ public class InterfaceInfoController {
     }
 
     /**
-     * 测试调用
+     * 调用
      *
      * @param interfaceInfoInvokeRequest
-     * @param request
      * @return
      */
     @PostMapping("/invoke")
-    public BaseResponse<Object> invokeInterfaceInfo(@RequestBody InterfaceInfoInvokeRequest interfaceInfoInvokeRequest,
-                                                    HttpServletRequest request) {
-        if (interfaceInfoInvokeRequest == null || interfaceInfoInvokeRequest.getId() <= 0) {
+    public BaseResponse<Object> invokeInterfaceInfo(@RequestBody InterfaceInfoInvokeRequest interfaceInfoInvokeRequest, HttpServletRequest request) {
+        // 参数校验
+        Long id = interfaceInfoInvokeRequest.getId();
+        if (id <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        long id = interfaceInfoInvokeRequest.getId();
-        String userRequestParams = interfaceInfoInvokeRequest.getUserRequestParams();
-        // 判断是否存在
+        // 校验接口是否存在
         InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
         if (oldInterfaceInfo == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
         }
-        if (oldInterfaceInfo.getStatus() == InterfaceInfoStatusEnum.OFFLINE.getValue()) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "接口已关闭");
+
+        // 校验接口是否上线
+        if (!oldInterfaceInfo.getStatus().equals(InterfaceInfoStatusEnum.ONLINE.getValue())) {
+            throw new BusinessException(ErrorCode.FORBIDDEN_ERROR, "接口未上线");
         }
+
+        // 获取api密钥
         User loginUser = userService.getLoginUser(request);
         String accessKey = loginUser.getAccessKey();
         String secretKey = loginUser.getSecretKey();
-        YunfeiApiClient tempClient = new YunfeiApiClient(accessKey, secretKey);
-        Gson gson = new Gson();
-        com.yunfei.yunfeiapiclientsdk.model.params.UserParams user = gson.fromJson(userRequestParams, com.yunfei.yunfeiapiclientsdk.model.params.UserParams.class);
-        UserResponse usernameByPost = null;
+        log.info("获取当前登录用户API密钥 accessKey:{}  secretKey:{}", accessKey, secretKey);
+        // 创建一个client发送请求
+        YunfeiApiClient client = new YunfeiApiClient(accessKey, secretKey);
+        // 调用sdk自动判断调用接口
+        // 调用sdk
+        URL url = null;
         try {
-            usernameByPost = tempClient.getUsernameByPost(user);
-        } catch (GlobalApiException e) {
-            throw new RuntimeException(e);
+            url = new URL(oldInterfaceInfo.getUrl());
+        } catch (MalformedURLException e) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "无效的地址转换");
         }
-        return ResultUtils.success(usernameByPost);
+        String path = url.getPath();
+        BaseRequest baseRequest = new BaseRequest();
+        baseRequest.setPath(path);
+        baseRequest.setMethod(oldInterfaceInfo.getMethod());
+        baseRequest.setRequestParams(interfaceInfoInvokeRequest.getRequestParams());
+        baseRequest.setUserRequest(request);
+        Object result = null;
+        try {
+            // 调用sdk解析地址方法
+            result = client.parseAddressAndCallInterface(baseRequest);
+        } catch (GlobalApiException e) {
+            throw new BusinessException(e.getCode(), e.getMessage());
+        }
+        if (ObjUtil.isEmpty(request)) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "请求SDK失败");
+        }
+        log.info("调用api接口返回结果：" + result);
+        return ResultUtils.success(result);
     }
-
 }

@@ -3,8 +3,6 @@ package com.yunfei.common;
 /**
  * 自定义错误码
  *
- * @author PYW
- * @from www.panyuwen.top
  */
 public enum ErrorCode {
 

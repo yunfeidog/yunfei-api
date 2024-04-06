@@ -3,8 +3,6 @@ package com.yunfei.common;
 /**
  * 返回工具类
  *
- * @author PYW
- * @from www.panyuwen.top
  */
 public class ResultUtils {
 

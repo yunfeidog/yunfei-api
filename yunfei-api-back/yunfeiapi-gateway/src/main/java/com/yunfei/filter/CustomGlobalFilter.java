@@ -34,11 +34,13 @@ import reactor.core.publisher.Mono;
 
 
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import static com.yunfei.yunfeiapiclientsdk.exception.ErrorCode.NOT_FOUND_ERROR;
@@ -46,8 +48,6 @@ import static com.yunfei.yunfeiapiclientsdk.exception.ErrorCode.NOT_FOUND_ERROR;
 
 /**
  * 自定义全局过滤器
- *
- * @author PYW
  */
 @Slf4j
 @Component
@@ -130,7 +130,6 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
      */
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        // 获取当前时间戳Localdatatime的方式
         startTime = LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli();
         // 1.请求日志
         log.info("GateWay网关全局过滤器请求日志信息==========>");
@@ -145,12 +144,8 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         // 获取公网ip
         HttpHeaders headers = request.getHeaders();
         ipAddress = headers.getFirst("X-Real-IP");
-        String uri = headers.getFirst("X-Original-URI");
-        String host = headers.getFirst("X-Original-Host");
-        String scheme = headers.getFirst("X-Original-Scheme");
-
-        originalUrl = scheme + "://" + host + uri;
-
+        URI requestURI = request.getURI();
+        originalUrl = requestURI.getScheme() + "://" + requestURI.getAuthority() + requestURI.getPath();
         if (ipAddress == null || ipAddress.isEmpty()) {
             log.info("未携带X-Real-IP请求头，尝试获取");
             ipAddress = request.getRemoteAddress().getHostString();
@@ -171,39 +166,34 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
 
         // 2.黑白名单
         if (blackList.contains(hostString)) {
+            log.info("请求被拦截,处于黑名单，请求来源地址：" + hostString);
             exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
             return exchange.getResponse().setComplete();
         }
 
         // 3,用户鉴权（判断 ak、sk 是否合法）
-
-        String secretId = headers.getFirst("X-SecretId");
-        String nonce = headers.getFirst("X-Nonce");
-        String body = headers.getFirst("X-Body");
+        String accessKey = headers.getFirst("accessKey");
+        String nonce = headers.getFirst("nonce");
+        String body = headers.getFirst("body");
         try {
             body = new String(body.getBytes("ISO-8859-1"), "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        String timestamp = headers.getFirst("X-Timestamp");
-        String sign = headers.getFirst("X-Sign");
+        String timestamp = headers.getFirst("timestamp");
+        String sign = headers.getFirst("sign");
 
         // Api密钥是否分配给用户校验
         User invokeUser = null;
-        invokeUser = innerUserService.getInvokeUser(secretId);
+        invokeUser = innerUserService.getInvokeUser(accessKey);
         if (ObjUtil.isEmpty(invokeUser)) {
             throw new BusinessException(NOT_FOUND_ERROR, "请求用户密钥不存在");
         }
-        if (invokeUser.getRemainCoins() <= 0) {
+        if (invokeUser.getRemainCoins() < 0) {
             throw new BusinessException(ErrorCode.FORBIDDEN_ERROR, "用户金币不足");
         }
-        if (invokeUser == null) {
-            throw new BusinessException(ErrorCode.FORBIDDEN_ERROR, "未查询到用户信息");
-        }
-
-
-        if (!invokeUser.getSecretKey().equals(secretId)) {
-            throw new BusinessException(ErrorCode.FORBIDDEN_ERROR, "API密钥解析失败");
+        if (!invokeUser.getAccessKey().equals(accessKey)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN_ERROR, "API密钥accessKey解析失败");
         }
 
         // 随机数不得大于一万
@@ -212,7 +202,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         }
 
         // 防重发，时间和当前时间不得超过五分钟
-        if (System.currentTimeMillis() - Long.parseLong(timestamp) > 300000) {
+        if (timestamp != null && System.currentTimeMillis() - Long.parseLong(timestamp) > 300000) {
             throw new BusinessException(ErrorCode.FORBIDDEN_ERROR, "API密钥解析失败");
         }
 
@@ -232,7 +222,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
             // 获取post请求的参数
             log.info("POST请求参数：");
         }
-        // 数据库查询模拟接口是否存在，以及请求方法是否匹配
+        // 数据库查询模拟接口是否存在，以及请求方法是否匹配 这里要使用原始Url
         InterfaceInfo interfaceInfo = innerInterfaceInfoService.getInterfaceInfo(originalUrl, method);
         if (ObjUtil.isEmpty(interfaceInfo)) {
             throw new BusinessException(NOT_FOUND_ERROR, "请求接口不存在");
@@ -243,9 +233,6 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         }
         interfaceInfoId = interfaceInfo.getId();
         log.info("interfaceInfoId:{}", interfaceInfoId);
-        // 6.请求转发，调用模拟接口
-        // 7.响应日志
-
         return handleResponse(exchange, chain, interfaceInfoId, invokeUser.getId());
     }
 
@@ -354,7 +341,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
 
         InterfaceLog interfaceLog = new InterfaceLog();
         interfaceLog.setInterfaceId(interfaceInfoId);
-        interfaceLog.setRequestTime(null);
+        interfaceLog.setRequestTime(new Date(startTime));
         interfaceLog.setRequestMethod(method);
         interfaceLog.setRequestUrl(originalUrl);
         interfaceLog.setRequestContentLength(requestContentLength);
@@ -363,7 +350,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
         interfaceLog.setUserId(userId);
         interfaceLog.setClientIp(ipAddress);
         interfaceLog.setRequestDuration(responseTime);
-        interfaceLogService.save(interfaceLog);
+        interfaceLogService.saveInterfaceLog(interfaceLog);
 
     }
 }

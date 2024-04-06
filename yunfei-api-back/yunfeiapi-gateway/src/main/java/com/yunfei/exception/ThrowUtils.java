@@ -5,7 +5,6 @@ import com.yunfei.yunfeiapiclientsdk.exception.ErrorCode;
 
 /**
  * 抛异常工具类
- *
  */
 public class ThrowUtils {
 

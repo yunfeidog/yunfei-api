@@ -7,9 +7,6 @@ import java.io.Serializable;
 /**
  * 通用返回类
  *
- * @param <T>
- * @author PYW
- * @from www.panyuwen.top
  */
 @Data
 public class BaseResponse<T> implements Serializable {
