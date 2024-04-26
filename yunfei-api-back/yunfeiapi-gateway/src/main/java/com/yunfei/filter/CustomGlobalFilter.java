@@ -135,14 +135,8 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
                         // (这里就理解为它在拼接字符串,它把缓冲区的数据取出来，一点一点拼接好)
                         return super.writeWith(fluxBody.collectList().flatMap(list -> {
                             log.info("响应结果：" + list);
-                            // 调用成功后的处理逻辑
-                            // 调用成功
-                            // 接口调用次数+1
-                            log.info("调用请求后扣款方法：interfaceId:{}  userId:{}", interfaceId, userId);
-                            boolean invoke = innerUserInterfaceInfoService.invokeCount(interfaceId, userId);
-                            log.info("网关调用接口调用次数+1: {}", interfaceId);
-                            // todo 扣除金币
-                            // boolean consume = innerUserService.consumeCoins(userId, interfaceId);
+                            gatewayService.invokeInterfaceCount(interfaceId, userId);
+
                             // 读取响应体的内容并转换为字节数组
                             byte[] content = null;
                             if (list.size() != 1) {
@@ -166,10 +160,9 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
                             // 得到响应体
                             requestLog.setResponseContentLength((long) content.length);
                             String data = new String(content, StandardCharsets.UTF_8);
-                            // 得到响应体大小
 
                             // 打印日志
-                            log.info("响应结果：" + data);
+                            log.info("响应结果：{}", data);
 
                             // 返回一个包含处理后的响应体的 DataBuffer
                             return Mono.just(bufferFactory.wrap(content)).doFinally(signalType -> logSave(requestLog));

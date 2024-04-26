@@ -38,5 +38,23 @@ public interface GatewayService {
      */
     User checkInvokeUserAuth(ServerWebExchange exchange, GatewayFilterChain chain);
 
+    /**
+     * 检查接口信息是否正常 是否可以调用等信息
+     *
+     * @param exchange
+     * @param chain
+     * @param invokeUser
+     * @param requestLog
+     * @return
+     */
     InterfaceInfo checkInterfaceInfoStatus(ServerWebExchange exchange, GatewayFilterChain chain, User invokeUser, RequestLog requestLog);
+
+    /**
+     * 调用接口成功之后 接口调用次数+1 扣除用户金币
+     *
+     * @param interfaceId
+     * @param userId
+     * @return
+     */
+    boolean invokeInterfaceCount(Long interfaceId, Long userId);
 }

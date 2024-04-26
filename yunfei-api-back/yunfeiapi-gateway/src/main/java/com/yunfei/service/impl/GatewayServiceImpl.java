@@ -10,6 +10,7 @@ import com.yunfei.yunfeiapicommon.model.entity.InterfaceInfo;
 import com.yunfei.yunfeiapicommon.model.entity.User;
 import com.yunfei.yunfeiapicommon.model.enums.InterfaceInfoStatusEnum;
 import com.yunfei.yunfeiapicommon.service.InnerInterfaceInfoService;
+import com.yunfei.yunfeiapicommon.service.InnerUserInterfaceInfoService;
 import com.yunfei.yunfeiapicommon.service.InnerUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -46,6 +47,9 @@ public class GatewayServiceImpl implements GatewayService {
 
     @DubboReference
     private InnerInterfaceInfoService innerInterfaceInfoService;
+
+    @DubboReference
+    private InnerUserInterfaceInfoService innerUserInterfaceInfoService;
 
 
     @Override
@@ -181,5 +185,15 @@ public class GatewayServiceImpl implements GatewayService {
         log.info("用户id：{}，接口id：{}", invokeUser.getId(), interfaceInfo.getId());
         requestLog.setInterfaceInfoId(interfaceInfo.getId());
         return interfaceInfo;
+    }
+
+    @Override
+    public boolean invokeInterfaceCount(Long interfaceId, Long userId) {
+        // 接口调用次数+1
+        boolean invoke = innerUserInterfaceInfoService.invokeCount(interfaceId, userId);
+        log.info("网关调用接口调用次数+1: {}", interfaceId);
+        // todo 扣除金币
+        boolean consume = innerUserService.consumeCoins(userId, interfaceId);
+        return invoke && consume;
     }
 }

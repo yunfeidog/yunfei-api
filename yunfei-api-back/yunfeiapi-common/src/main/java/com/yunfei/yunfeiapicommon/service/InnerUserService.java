@@ -14,4 +14,12 @@ public interface InnerUserService {
      * @return
      */
     User getInvokeUser(String accessKey);
+
+    /**
+     * 扣除用户金币
+     * @param userId
+     * @param interfaceId
+     * @return
+     */
+    boolean consumeCoins(Long userId, Long interfaceId);
 }
