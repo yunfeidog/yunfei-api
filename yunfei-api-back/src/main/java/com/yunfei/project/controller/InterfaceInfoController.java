@@ -46,8 +46,6 @@ public class InterfaceInfoController {
     @Resource
     private UserService userService;
 
-    @Resource
-    private YunfeiApiClient yunfeiapiClient;
 
     // region 增删改查
 
@@ -223,18 +221,6 @@ public class InterfaceInfoController {
         InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
         if (oldInterfaceInfo == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
-        }
-        // 判断该接口是否可以调用
-        com.yunfei.yunfeiapiclientsdk.model.params.UserParams user = new com.yunfei.yunfeiapiclientsdk.model.params.UserParams();
-        user.setUsername("test");
-        UserResponse userResponse = null;
-        try {
-            userResponse = yunfeiapiClient.getUsernameByPost(user);
-        } catch (GlobalApiException e) {
-            throw new RuntimeException(e);
-        }
-        if (userResponse == null) {
-            throw new BusinessException(ErrorCode.OPERATION_ERROR, "接口调用失败");
         }
         // 仅本人或管理员可修改
         InterfaceInfo interfaceInfo = new InterfaceInfo();

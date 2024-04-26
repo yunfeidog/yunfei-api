@@ -8,9 +8,7 @@ import javax.annotation.Resource;
 
 /**
  * 用户接口信息服务测试
- *
- *  
- *   
+ * 
  */
 @SpringBootTest
 public class UserInterfaceInfoServiceTest {

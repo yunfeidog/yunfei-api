@@ -5,9 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * yunfeiapi 模拟接口入口类
- *
- *  
- *   
+ * 
  */
 @SpringBootApplication
 public class YunfeiApiInterfaceApplication {

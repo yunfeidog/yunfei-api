@@ -8,9 +8,7 @@ import java.io.Serializable;
 
 /**
  * 查询请求
- *
- *  
- *   
+ * 
  */
 @EqualsAndHashCode(callSuper = true)
 @Data

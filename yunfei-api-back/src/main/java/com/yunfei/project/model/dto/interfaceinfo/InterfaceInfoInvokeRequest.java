@@ -8,8 +8,6 @@ import java.util.Map;
 /**
  * 接口调用请求
  *
- *
- *
  */
 @Data
 public class InterfaceInfoInvokeRequest implements Serializable {

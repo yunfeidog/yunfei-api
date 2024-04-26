@@ -2,6 +2,7 @@ package com.yunfei.yunfeiapiclientsdk.model.response;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -11,17 +12,7 @@ import java.util.List;
 public class WeiboHotSearchResponse {
     private List<WeiboHot> weibohotSearch;
 
-    public static class WeiboHot {
-        private Integer hotNum;
 
-        private Integer index;
-
-        private String hotType;
-
-        private String title;
-
-        private String url;
-    }
 
 }
 

@@ -9,9 +9,7 @@ import java.util.Date;
 
 /**
  * 用户查询请求
- *
- *  
- *   
+ * 
  */
 @EqualsAndHashCode(callSuper = true)
 @Data

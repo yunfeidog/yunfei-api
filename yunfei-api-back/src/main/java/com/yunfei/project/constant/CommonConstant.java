@@ -2,9 +2,7 @@ package com.yunfei.project.constant;
 
 /**
  * 通用常量
- *
- *  
- *   
+ * 
  */
 public interface CommonConstant {
 

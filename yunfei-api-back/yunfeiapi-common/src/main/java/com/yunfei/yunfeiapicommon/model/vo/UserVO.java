@@ -7,9 +7,7 @@ import java.util.Date;
 
 /**
  * 用户视图
- *
- *  
- *   
+ * 
  */
 @Data
 public class UserVO implements Serializable {

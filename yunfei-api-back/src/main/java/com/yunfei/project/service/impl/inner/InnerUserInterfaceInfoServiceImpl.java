@@ -8,9 +8,7 @@ import javax.annotation.Resource;
 
 /**
  * 内部用户接口信息服务实现类
- *
- *  
- *   
+ * 
  */
 @DubboService
 public class InnerUserInterfaceInfoServiceImpl implements InnerUserInterfaceInfoService {

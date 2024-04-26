@@ -6,8 +6,6 @@ import com.yunfei.yunfeiapicommon.model.entity.UserInterfaceInfo;
 /**
  * 用户接口信息服务
  *
- *
- *
  */
 public interface UserInterfaceInfoService extends IService<UserInterfaceInfo> {
 

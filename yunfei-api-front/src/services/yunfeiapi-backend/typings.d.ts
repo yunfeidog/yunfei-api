@@ -151,29 +151,37 @@ declare namespace API {
   };
 
   type InterfaceInfoAddRequest = {
+    consumeCoins?: number;
     description?: string;
     method?: string;
     name?: string;
+    requestExample?: string;
     requestHeader?: string;
     requestParams?: string;
     responseHeader?: string;
+    responseParams?: string;
+    returnFormat?: string;
     url?: string;
   };
 
   type InterfaceInfoInvokeRequest = {
     id?: number;
-    userRequestParams?: string;
+    requestParams?: Record<string, any>;
   };
 
   type InterfaceInfoUpdateRequest = {
+    consumeCoins?: number;
     description?: string;
     id?: number;
     method?: string;
     name?: string;
+    requestExample?: string;
     requestHeader?: string;
     requestParams?: string;
     responseHeader?: string;
-    status?: number;
+    responseParams?: string;
+    returnFormat?: string;
+    status?: string;
     url?: string;
   };
 

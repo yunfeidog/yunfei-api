@@ -6,6 +6,7 @@ import * as analysisController from './analysisController';
 import * as basicErrorController from './basicErrorController';
 import * as interfaceInfoController from './interfaceInfoController';
 import * as postController from './postController';
+import * as testController from './testController';
 import * as userController from './userController';
 import * as userInterfaceInfoController from './userInterfaceInfoController';
 export default {
@@ -13,6 +14,7 @@ export default {
   basicErrorController,
   interfaceInfoController,
   postController,
+  testController,
   userController,
   userInterfaceInfoController,
 };

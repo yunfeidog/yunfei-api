@@ -23,8 +23,6 @@ import org.apache.dubbo.rpc.RpcContext;
 /**
  * 示例服务实现类
  *
- *
- *
  */
 @DubboService
 public class DemoServiceImpl implements DemoService {

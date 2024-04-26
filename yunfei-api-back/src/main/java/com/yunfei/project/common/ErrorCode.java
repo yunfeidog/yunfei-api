@@ -2,9 +2,6 @@ package com.yunfei.project.common;
 
 /**
  * 错误码
- *
- *  
- *   
  */
 public enum ErrorCode {
 

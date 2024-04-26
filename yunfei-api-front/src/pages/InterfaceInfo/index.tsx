@@ -492,28 +492,6 @@ const InterfaceInfo: React.FC = () => {
   }, []);
 
 
-  const [activeTabKey1, setActiveTabKey1] = useState<string>('tab1');
-
-  const onTab1Change = (key: string) => {
-    setActiveTabKey1(key);
-  };
-
-  const tabList = [
-    {
-      key: 'tab1',
-      tab: 'tab1',
-    },
-    {
-      key: 'tab2',
-      tab: 'tab2',
-    },
-  ];
-
-  const contentList: Record<string, React.ReactNode> = {
-    tab1: <p>content1</p>,
-    tab2: <p>content2</p>,
-  };
-
   return (
     <PageContainer
       header={{

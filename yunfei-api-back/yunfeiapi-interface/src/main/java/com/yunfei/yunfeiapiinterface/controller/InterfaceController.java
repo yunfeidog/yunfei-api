@@ -76,7 +76,7 @@ public class InterfaceController {
         JSONArray realtimeArray = jsonObject.getJSONObject("data").getJSONArray("realtime");
         // 遍历realtime数组并只保留note、label_name和num字段
 
-        List<WeiboHotSearchResponse.WeiboHot> weiboHotList = new ArrayList<>();
+        List<WeiboHot> weiboHotList = new ArrayList<>();
         for (int i = 0; i < realtimeArray.size(); i++) {
             JSONObject realtimeObject = realtimeArray.getJSONObject(i);
             JSONObject filteredObject = new JSONObject();
@@ -86,7 +86,7 @@ public class InterfaceController {
             filteredObject.put("hotType", realtimeObject.getString("label_name"));
             filteredObject.put("hotNum", realtimeObject.getInteger("num"));
             filteredObject.put("url", "https://s.weibo.com/weibo?q=%23" + URLUtil.encode(note) + "%23");
-            WeiboHotSearchResponse.WeiboHot weiboHot = filteredObject.toJavaObject(WeiboHotSearchResponse.WeiboHot.class);
+            WeiboHot weiboHot = filteredObject.toJavaObject(WeiboHot.class);
             weiboHotList.add(weiboHot);
         }
         WeiboHotSearchResponse weiboHotSearchResponse = new WeiboHotSearchResponse();

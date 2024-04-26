@@ -7,8 +7,6 @@ import java.io.Serializable;
 /**
  * 接口创建请求
  *
- *
- *
  */
 @Data
 public class InterfaceInfoAddRequest implements Serializable {
