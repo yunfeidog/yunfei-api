@@ -9,13 +9,14 @@ import com.yunfei.yunfeiapicommon.model.entity.InterfaceInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * 接口信息服务实现类
- * 
  */
 @Service
 public class InterfaceInfoServiceImpl extends ServiceImpl<InterfaceInfoMapper, InterfaceInfo>
-    implements InterfaceInfoService {
+        implements InterfaceInfoService {
 
     @Override
     public void validInterfaceInfo(InterfaceInfo interfaceInfo, boolean add) {
@@ -32,6 +33,11 @@ public class InterfaceInfoServiceImpl extends ServiceImpl<InterfaceInfoMapper, I
         if (StringUtils.isNotBlank(name) && name.length() > 50) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "名称过长");
         }
+    }
+
+    @Override
+    public List<InterfaceInfo> listTopInvokeInterfaceInfo(int topNum) {
+        return baseMapper.listTopInvokeInterfaceInfo(topNum);
     }
 
 }

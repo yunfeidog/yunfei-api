@@ -42,6 +42,9 @@ public class YunfeiApiClient {
 
     private String secretKey;
 
+    // ThreadLocal
+    ThreadLocal<String> sourceThreadLocal = ThreadLocal.withInitial(() -> "sdk");
+
     private static String GATEWAY_URL = "http://localhost:10003";
 
 
@@ -135,6 +138,8 @@ public class YunfeiApiClient {
         String method = baseRequest.getMethod();
         Map<String, Object> paramsList = baseRequest.getRequestParams();
         HttpServletRequest userRequest = baseRequest.getUserRequest();
+        // 来自web
+        sourceThreadLocal.set("web");
         Class<?> clazz = YunfeiApiClient.class;
         Object result = null;
         try {
@@ -154,21 +159,6 @@ public class YunfeiApiClient {
             // 获取星座运势
             if (path.equals(UrlToMethodEnum.horoscope.getPath())) {
                 return invokeMethod(UrlToMethodEnum.horoscope.getMethod(), paramsList, HoroscopeParams.class);
-            }
-            // 获取公网ip
-            if (path.equals(UrlToMethodEnum.publicIp.getPath())) {
-                // todo 上线时测试是否获取用户的公网ip，目前本机无法获取到X-Real-IP
-                String ipAddress = userRequest.getHeader("X-Real-IP");
-                if (ipAddress == null || ipAddress.isEmpty()) {
-                    log.info("未携带X-Real-IP请求头，尝试获取");
-                    ipAddress = userRequest.getRemoteAddr();
-                }
-                if (ipAddress == null || ipAddress.isEmpty()) {
-                    throw new GlobalApiException(ErrorCode.NOT_FOUND_ERROR, "获取公网ip失败");
-                }
-                log.info("获取到的公网ip：", ipAddress);
-                paramsList.put("ipAddress", ipAddress);
-                return invokeMethod(UrlToMethodEnum.publicIp.getMethod(), paramsList, PublicIpParams.class);
             }
             // 随机壁纸
             if (path.equals(UrlToMethodEnum.randomWallpaper.getPath())) {
@@ -278,6 +268,7 @@ public class YunfeiApiClient {
 
         // 添加通用请求头
         request.addHeaders(getHeaderMap(jsonBody));
+
         // 发送请求并获取响应
         HttpResponse response = request.execute();
         String responseBody = response.body();
@@ -353,6 +344,7 @@ public class YunfeiApiClient {
         headerMap.put("body", body);
         headerMap.put("timestamp", System.currentTimeMillis() + "");
         headerMap.put("sign", SignUtils.genSign(body, secretKey));
+        headerMap.put("source", sourceThreadLocal.get());
         return headerMap;
     }
 

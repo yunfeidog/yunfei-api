@@ -57,4 +57,11 @@ public interface GatewayService {
      * @return
      */
     boolean invokeInterfaceCount(Long interfaceId, Long userId);
+
+    /**
+     * 保存请求日志
+     *
+     * @param requestLog
+     */
+    void logSave(RequestLog requestLog);
 }

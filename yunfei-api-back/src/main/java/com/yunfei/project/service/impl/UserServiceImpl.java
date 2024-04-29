@@ -166,6 +166,22 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         return true;
     }
 
+    @Override
+    public void changeKeys(HttpServletRequest request) {
+        // 1. 获取当前登录用户
+        User currentUser = getLoginUser(request);
+        // 2. 生成新的 accessKey, secretKey
+        String accessKey = DigestUtil.md5Hex(SALT + currentUser.getUserAccount() + RandomUtil.randomNumbers(5));
+        String secretKey = DigestUtil.md5Hex(SALT + currentUser.getUserAccount() + RandomUtil.randomNumbers(8));
+        // 3. 更新数据库
+        currentUser.setAccessKey(accessKey);
+        currentUser.setSecretKey(secretKey);
+        boolean updateResult = this.updateById(currentUser);
+        if (!updateResult) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "更新密钥失败");
+        }
+    }
+
 }
 
 

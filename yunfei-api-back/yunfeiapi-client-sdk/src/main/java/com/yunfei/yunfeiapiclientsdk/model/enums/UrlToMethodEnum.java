@@ -15,7 +15,6 @@ public enum UrlToMethodEnum {
     poisonousChickenSoup("/api/poisonousChickenSoup", "getPoisonousChickenSoup"),
     weiboHotSearch("/api/weiboHotSearch", "getWeiboHotSearch"),
     horoscope("/api/horoscope", "getHoroscope"),
-    publicIp("/api/publicIp", "getPublicIp"),
     randomWallpaper("/api/randomWallpaper", "getRandomWallpaper"),
     webFaviconIcon("/api/webFaviconIcon", "getWebFaviconIcon"),
     loveTalk("/api/loveTalk", "getLoveTalk"),

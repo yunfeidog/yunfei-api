@@ -14,6 +14,14 @@ export async function addUserUsingPost(body: API.UserAddRequest, options?: { [ke
   });
 }
 
+/** changeKeys GET /api/user/changeKey */
+export async function changeKeysUsingGet(options?: { [key: string]: any }) {
+  return request<API.BaseResponsestring>('/api/user/changeKey', {
+    method: 'GET',
+    ...(options || {}),
+  });
+}
+
 /** deleteUser POST /api/user/delete */
 export async function deleteUserUsingPost(
   body: API.DeleteRequest,
@@ -47,6 +55,14 @@ export async function getUserByIdUsingGet(
 /** getLoginUser GET /api/user/get/login */
 export async function getLoginUserUsingGet(options?: { [key: string]: any }) {
   return request<API.BaseResponseUserVO>('/api/user/get/login', {
+    method: 'GET',
+    ...(options || {}),
+  });
+}
+
+/** getKeys GET /api/user/getKey */
+export async function getKeysUsingGet(options?: { [key: string]: any }) {
+  return request<API.BaseResponseUser>('/api/user/getKey', {
     method: 'GET',
     ...(options || {}),
   });

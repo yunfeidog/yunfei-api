@@ -16,6 +16,7 @@
         <result property="responseContentLength" column="responseContentLength" jdbcType="BIGINT"/>
         <result property="requestDuration" column="requestDuration" jdbcType="BIGINT"/>
         <result property="clientIp" column="clientIp" jdbcType="VARCHAR"/>
+        <result property="source" column="source" jdbcType="VARCHAR"/>
         <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
         <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
         <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
@@ -25,7 +26,7 @@
         id,interfaceId,userId,
         requestTime,requestMethod,requestUrl,
         requestContentLength,responseStatusCode,requestDuration,
-        clientIp,createTime,updateTime,
+        clientIp,source,createTime,updateTime,
         isDelete
     </sql>
 </mapper>

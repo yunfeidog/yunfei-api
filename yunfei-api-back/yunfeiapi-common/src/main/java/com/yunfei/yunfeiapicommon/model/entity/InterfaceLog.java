@@ -4,15 +4,18 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+
 import java.io.Serializable;
 import java.util.Date;
+
 import lombok.Data;
 
 /**
  * 接口调用记录表
+ *
  * @TableName interface_log
  */
-@TableName(value ="interface_log")
+@TableName(value = "interface_log")
 @Data
 public class InterfaceLog implements Serializable {
     /**
@@ -69,6 +72,11 @@ public class InterfaceLog implements Serializable {
      * 用户ip
      */
     private String clientIp;
+
+    /**
+     * 调用来源
+     */
+    private String source;
 
     /**
      * 创建时间

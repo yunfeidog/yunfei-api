@@ -2,12 +2,8 @@ package com.yunfei.filter;
 
 import com.yunfei.service.GatewayService;
 import com.yunfei.yunfeiapicommon.model.entity.InterfaceInfo;
-import com.yunfei.yunfeiapicommon.model.entity.InterfaceLog;
 import com.yunfei.yunfeiapicommon.model.entity.User;
-import com.yunfei.yunfeiapicommon.service.InnerInterfaceInfoService;
 import com.yunfei.yunfeiapicommon.service.InnerInterfaceLogService;
-import com.yunfei.yunfeiapicommon.service.InnerUserInterfaceInfoService;
-import com.yunfei.yunfeiapicommon.service.InnerUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.reactivestreams.Publisher;
@@ -25,13 +21,9 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-
 import javax.annotation.Resource;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.Date;
 
 
 /**
@@ -41,18 +33,7 @@ import java.util.Date;
 @Component
 public class CustomGlobalFilter implements GlobalFilter, Ordered {
 
-    @DubboReference
-    private InnerUserService innerUserService;
 
-    @DubboReference
-    private InnerUserInterfaceInfoService innerUserInterfaceInfoService;
-
-
-    @DubboReference
-    private InnerInterfaceInfoService innerInterfaceInfoService;
-
-    @DubboReference
-    private InnerInterfaceLogService interfaceLogService;
 
     @Resource
     private GatewayService gatewayService;
@@ -78,6 +59,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
      */
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        System.out.println(exchange.getRequest());
         // 1.记录请求日志
         RequestLog requestLog = gatewayService.recordRequestLog(exchange);
 
@@ -165,7 +147,7 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
                             log.info("响应结果：{}", data);
 
                             // 返回一个包含处理后的响应体的 DataBuffer
-                            return Mono.just(bufferFactory.wrap(content)).doFinally(signalType -> logSave(requestLog));
+                            return Mono.just(bufferFactory.wrap(content)).doFinally(signalType -> gatewayService.logSave(requestLog));
                         }));
                     } else {
                         log.error("网关处理响应异常{}", getStatusCode());
@@ -177,47 +159,10 @@ public class CustomGlobalFilter implements GlobalFilter, Ordered {
             return chain.filter(exchange.mutate().response(decoratedResponse).build());
         }
         // 对于非200 OK的请求，直接返回，进行降级处理
-        return chain.filter(exchange).doFinally(signalType -> logSave(requestLog));
+        return chain.filter(exchange).doFinally(signalType ->  gatewayService.logSave(requestLog));
     }
 
-    private void logSave(RequestLog requestLog) {
-        log.info("开始存储日志......");
-        long endTime = LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli();
-        requestLog.setEndTime(endTime);
-        long startTime = requestLog.getStartTime();
 
-        // 计算响应时间
-        long responseTime = endTime - startTime;
-        requestLog.setResponseTime(responseTime);
 
-        log.info("请求开始时间：{}，请求结束时间：{}，请求耗时：{}ms", startTime, endTime, responseTime);
-        interfaceLogSave(requestLog);
-        log.info("接口调用日志存储完成......");
-    }
 
-    private void interfaceLogSave(RequestLog requestLog) {
-        String method = requestLog.getMethod();
-        String originalUrl = requestLog.getOriginalUrl();
-        Long requestContentLength = requestLog.getRequestContentLength();
-        Long responseContentLength = requestLog.getResponseContentLength();
-        String ipAddress = requestLog.getIpAddress();
-        Long userId = requestLog.getUserId();
-        Long interfaceInfoId = requestLog.getInterfaceInfoId();
-        HttpStatus statusCode = requestLog.getStatusCode();
-        Long startTime = requestLog.getStartTime();
-        Long responseTime = requestLog.getResponseTime();
-
-        InterfaceLog interfaceLog = new InterfaceLog();
-        interfaceLog.setInterfaceId(interfaceInfoId);
-        interfaceLog.setRequestTime(new Date(startTime));
-        interfaceLog.setRequestMethod(method);
-        interfaceLog.setRequestUrl(originalUrl);
-        interfaceLog.setRequestContentLength(requestContentLength);
-        interfaceLog.setResponseStatusCode((long) statusCode.value());
-        interfaceLog.setRequestContentLength(responseContentLength);
-        interfaceLog.setUserId(userId);
-        interfaceLog.setClientIp(ipAddress);
-        interfaceLog.setRequestDuration(responseTime);
-        interfaceLogService.saveInterfaceLog(interfaceLog);
-    }
 }

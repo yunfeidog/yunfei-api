@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * 用户服务
- * 
+ *
  */
 public interface UserService extends IService<User> {
 
@@ -55,4 +55,10 @@ public interface UserService extends IService<User> {
      * @return
      */
     boolean userLogout(HttpServletRequest request);
+
+    /**
+     * 修改密钥
+     * @param request
+     */
+    void changeKeys(HttpServletRequest request);
 }

@@ -28,7 +28,7 @@ const InterfaceAnalysis: React.FC = () => {
   // 映射：{ value: 1048, name: 'Search Engine' },
   const chartData = data.map(item => {
     return {
-      value: item.totalNum,
+      value: item.totalInvokes,
       name: item.name,
     }
   })

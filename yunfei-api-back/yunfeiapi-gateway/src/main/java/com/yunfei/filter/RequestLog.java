@@ -42,6 +42,8 @@ public class RequestLog {
 
     private Long endTime = null;
 
+    private String source = null;
+
     // 请求响应时间
     private Long responseTime = null;
 }

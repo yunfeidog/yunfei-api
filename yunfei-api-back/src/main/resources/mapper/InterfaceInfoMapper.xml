@@ -33,4 +33,12 @@
         status,requestExample,userId,
         createTime,updateTime,isDelete
     </sql>
+    <select id="listTopInvokeInterfaceInfo" resultType="com.yunfei.yunfeiapicommon.model.entity.InterfaceInfo">
+        select
+        <include refid="Base_Column_List"/>
+        from interface_info
+        where status = 1
+        order by totalInvokes desc
+        limit 0, #{topNum}
+    </select>
 </mapper>

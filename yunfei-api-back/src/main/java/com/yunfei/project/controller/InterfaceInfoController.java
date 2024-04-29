@@ -163,7 +163,9 @@ public class InterfaceInfoController {
             BeanUtils.copyProperties(interfaceInfoQueryRequest, interfaceInfoQuery);
         }
         QueryWrapper<InterfaceInfo> queryWrapper = new QueryWrapper<>(interfaceInfoQuery);
+        queryWrapper.orderByAsc("status");
         List<InterfaceInfo> interfaceInfoList = interfaceInfoService.list(queryWrapper);
+        // 按照status排序 1-上线 0-下线 1排在0前面
         return ResultUtils.success(interfaceInfoList);
     }
 
@@ -197,6 +199,7 @@ public class InterfaceInfoController {
         queryWrapper.orderBy(StringUtils.isNotBlank(sortField),
                 sortOrder.equals(CommonConstant.SORT_ORDER_ASC), sortField);
         Page<InterfaceInfo> interfaceInfoPage = interfaceInfoService.page(new Page<>(current, size), queryWrapper);
+
         return ResultUtils.success(interfaceInfoPage);
     }
 
@@ -302,6 +305,8 @@ public class InterfaceInfoController {
         baseRequest.setPath(path);
         baseRequest.setMethod(oldInterfaceInfo.getMethod());
         baseRequest.setRequestParams(interfaceInfoInvokeRequest.getRequestParams());
+        // 流量染色
+        request.setAttribute("request-source", "web");
         baseRequest.setUserRequest(request);
         Object result = null;
         try {

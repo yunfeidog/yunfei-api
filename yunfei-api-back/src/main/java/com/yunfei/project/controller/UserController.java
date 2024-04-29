@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 
 /**
  * 用户接口
- *
  */
 @RestController
 @RequestMapping("/user")
@@ -33,6 +32,21 @@ public class UserController {
     private UserService userService;
 
     // region 登录相关
+
+    @GetMapping("/getKey")
+    public BaseResponse<User> getKeys(HttpServletRequest request) {
+        User user = userService.getLoginUser(request);
+        User safeUser = new User();
+        safeUser.setAccessKey(user.getAccessKey());
+        safeUser.setSecretKey(user.getSecretKey());
+        return ResultUtils.success(safeUser);
+    }
+
+    @GetMapping("/changeKey")
+    public BaseResponse<String> changeKeys(HttpServletRequest request) {
+        userService.changeKeys(request);
+        return ResultUtils.success("OK");
+    }
 
     /**
      * 用户注册

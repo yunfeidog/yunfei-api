@@ -20,4 +20,9 @@
         totalInvokes,status,createTime,
         updateTime,isDelete
     </sql>
+    <select id="listTopInvokeInterfaceInfo"
+            resultType="com.yunfei.yunfeiapicommon.model.entity.UserInterfaceInfo">
+        select <include refid="Base_Column_List"></include> from interface_info
+        order by totalInvokes desc limit #{limit}
+    </select>
 </mapper>

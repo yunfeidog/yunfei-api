@@ -7,9 +7,11 @@ import com.yunfei.service.GatewayService;
 import com.yunfei.yunfeiapiclientsdk.exception.ErrorCode;
 import com.yunfei.yunfeiapiclientsdk.utils.SignUtils;
 import com.yunfei.yunfeiapicommon.model.entity.InterfaceInfo;
+import com.yunfei.yunfeiapicommon.model.entity.InterfaceLog;
 import com.yunfei.yunfeiapicommon.model.entity.User;
 import com.yunfei.yunfeiapicommon.model.enums.InterfaceInfoStatusEnum;
 import com.yunfei.yunfeiapicommon.service.InnerInterfaceInfoService;
+import com.yunfei.yunfeiapicommon.service.InnerInterfaceLogService;
 import com.yunfei.yunfeiapicommon.service.InnerUserInterfaceInfoService;
 import com.yunfei.yunfeiapicommon.service.InnerUserService;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
@@ -27,6 +30,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import static com.yunfei.yunfeiapiclientsdk.exception.ErrorCode.NOT_FOUND_ERROR;
@@ -50,6 +54,9 @@ public class GatewayServiceImpl implements GatewayService {
 
     @DubboReference
     private InnerUserInterfaceInfoService innerUserInterfaceInfoService;
+
+    @DubboReference
+    private InnerInterfaceLogService interfaceLogService;
 
 
     @Override
@@ -79,6 +86,10 @@ public class GatewayServiceImpl implements GatewayService {
             // throw new BusinessException(NOT_FOUND_ERROR, "获取公网ip失败");
         }
         String hostString = request.getLocalAddress().getHostString();
+        long contentLength = headers.getContentLength();
+        log.info("contentLength：{}", contentLength);
+        String source = headers.getFirst("source");
+        log.info("source：{}", source);
 
         log.info("请求ip地址：{}", ipAddress);
         log.info("请求唯一标识：{}", request.getId());
@@ -98,6 +109,7 @@ public class GatewayServiceImpl implements GatewayService {
         requestLog.setUrl(url);
         requestLog.setIpAddress(ipAddress);
         requestLog.setOriginalUrl(originalUrl);
+        requestLog.setSource(source);
         return requestLog;
     }
 
@@ -189,11 +201,56 @@ public class GatewayServiceImpl implements GatewayService {
 
     @Override
     public boolean invokeInterfaceCount(Long interfaceId, Long userId) {
-        // 接口调用次数+1
+        // 用户调用该 接口调用次数+1
         boolean invoke = innerUserInterfaceInfoService.invokeCount(interfaceId, userId);
         log.info("网关调用接口调用次数+1: {}", interfaceId);
-        // todo 扣除金币
+        //  用户金币-1
         boolean consume = innerUserService.consumeCoins(userId, interfaceId);
-        return invoke && consume;
+        // 该接口的总调用次数+1
+        boolean invokeCount = innerInterfaceInfoService.invokeCount(interfaceId);
+        return invoke && consume && invokeCount;
+    }
+
+    @Override
+    public void logSave(RequestLog requestLog) {
+        log.info("开始存储日志......");
+        long endTime = LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli();
+        requestLog.setEndTime(endTime);
+        long startTime = requestLog.getStartTime();
+
+        // 计算响应时间
+        long responseTime = endTime - startTime;
+        requestLog.setResponseTime(responseTime);
+
+        log.info("请求开始时间：{}，请求结束时间：{}，请求耗时：{}ms", startTime, endTime, responseTime);
+        interfaceLogSave(requestLog);
+        log.info("接口调用日志存储完成......");
+    }
+
+    private void interfaceLogSave(RequestLog requestLog) {
+        String method = requestLog.getMethod();
+        String originalUrl = requestLog.getOriginalUrl();
+        Long requestContentLength = requestLog.getRequestContentLength();
+        Long responseContentLength = requestLog.getResponseContentLength();
+        String ipAddress = requestLog.getIpAddress();
+        Long userId = requestLog.getUserId();
+        Long interfaceInfoId = requestLog.getInterfaceInfoId();
+        HttpStatus statusCode = requestLog.getStatusCode();
+        Long startTime = requestLog.getStartTime();
+        Long responseTime = requestLog.getResponseTime();
+
+        InterfaceLog interfaceLog = new InterfaceLog();
+        interfaceLog.setSource(requestLog.getSource());
+        interfaceLog.setInterfaceId(interfaceInfoId);
+        interfaceLog.setRequestTime(new Date(startTime));
+        interfaceLog.setRequestMethod(method);
+        interfaceLog.setRequestUrl(originalUrl);
+        interfaceLog.setRequestContentLength(requestContentLength);
+        interfaceLog.setResponseStatusCode((long) statusCode.value());
+        interfaceLog.setRequestContentLength(responseContentLength);
+        interfaceLog.setUserId(userId);
+        interfaceLog.setClientIp(ipAddress);
+        interfaceLog.setRequestDuration(responseTime);
+        interfaceLogService.saveInterfaceLog(interfaceLog);
     }
 }

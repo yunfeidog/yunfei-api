@@ -18,6 +18,8 @@ const Index: React.FC = () => {
       const res = await listInterfaceInfoByPageUsingGet({
         current,
         pageSize,
+        "sortField":"status",
+        "sortOrder":"descend"
       });
       setList(res?.data?.records ?? []);
       setTotal(res?.data?.total ?? 0);
